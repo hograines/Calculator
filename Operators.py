@@ -6,22 +6,22 @@ class Operator(object):
         self.priority = priority
 
 
-class LeftOp(Operator):
+class LeftOperator(Operator):
     def __init__(self, priority):
         super().__init__(priority)
 
 
-class RightOp(Operator):
+class RightOperator(Operator):
     def __init__(self, priority):
         super().__init__(priority)
 
 
-class BetweenOp(Operator):
+class BinaryOperator(Operator):
     def __init__(self, priority):
         super().__init__(priority)
 
 
-class Add(BetweenOp):
+class Addition(BinaryOperator):
     def __init__(self):
         super().__init__(1)
 
@@ -30,7 +30,7 @@ class Add(BetweenOp):
         return x1+x2
 
 
-class Sub(BetweenOp):
+class Subtraction(BinaryOperator):
     def __init__(self):
         super().__init__(1)
 
@@ -39,7 +39,7 @@ class Sub(BetweenOp):
         return x1-x2
 
 
-class Mul(BetweenOp):
+class Multiple(BinaryOperator):
     def __init__(self):
         super().__init__(2)
 
@@ -48,16 +48,28 @@ class Mul(BetweenOp):
         return x1 * x2
 
 
-class Div(BetweenOp):
+class Divide(BinaryOperator):
     def __init__(self):
         super().__init__(2)
 
     @staticmethod
     def calc(x1, x2):
-        return x1 / x2
+        try:
+            return x1 / x2
+        except ZeroDivisionError as er:
+            print(er)
 
 
-class Pow(BetweenOp):
+class MinusUnary(LeftOperator):
+    def __init__(self):
+        super().__init__(2.5)
+
+    @staticmethod
+    def calc(x1):
+        return -x1
+
+
+class Power(BinaryOperator):
     def __init__(self):
         super().__init__(3)
 
@@ -66,7 +78,7 @@ class Pow(BetweenOp):
         return pow(x1, x2)
 
 
-class Mod(BetweenOp):
+class Module(BinaryOperator):
     def __init__(self):
         super().__init__(4)
 
@@ -75,7 +87,7 @@ class Mod(BetweenOp):
         return x1 % x2
 
 
-class Avg(BetweenOp):
+class Average(BinaryOperator):
     def __init__(self):
         super().__init__(5)
 
@@ -84,41 +96,39 @@ class Avg(BetweenOp):
         return (x1 + x2)/2
 
 
-class Max(BetweenOp):
+class Maximum(BinaryOperator):
     def __init__(self):
         super().__init__(5)
 
     @staticmethod
     def calc(x1, x2):
-        if x1 > x2:
-            return x1
-        return x2
+        return max(x1, x2)
 
 
-class Min(BetweenOp):
+class Minimum(BinaryOperator):
     def __init__(self):
         super().__init__(5)
 
     @staticmethod
     def calc(x1, x2):
-        if x1 < x2:
-            return x1
-        return x2
+        return min(x1, x2)
 
 
-class Fact(RightOp):
+class Factorial(RightOperator):
     def __init__(self):
         super().__init__(6)
 
     @staticmethod
     def calc(x1):
-        if x1 == 0 or x1 == 1:
+        if x1 < 0:
+            raise ValueError("Factorial is not defined for negative numbers")
+        elif x1 == 0 or x1 == 1:
             return 1
         else:
-            return x1 * Fact.calc(x1 - 1)
+            return x1 * Factorial.calc(x1 - 1)
 
 
-class Sum(RightOp):
+class Summary(RightOperator):
     def __init__(self):
         super().__init__(6)
 
@@ -127,9 +137,18 @@ class Sum(RightOp):
         return sum(int(digit) for digit in str(abs(x1)) if digit.isdigit())
 
 
-class Tilda(LeftOp):
+class Tilda(LeftOperator):
     def __init__(self):
         super().__init__(6)
+
+    @staticmethod
+    def calc(x1):
+        return -x1
+
+
+class MinusSign(LeftOperator):
+    def __init__(self):
+        super().__init__(7)
 
     @staticmethod
     def calc(x1):
