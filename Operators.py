@@ -21,6 +21,7 @@ class BinaryOperator(Operator):
         super().__init__(priority)
 
 
+# +
 class Addition(BinaryOperator):
     def __init__(self):
         super().__init__(1)
@@ -30,6 +31,7 @@ class Addition(BinaryOperator):
         return x1+x2
 
 
+# -
 class Subtraction(BinaryOperator):
     def __init__(self):
         super().__init__(1)
@@ -39,6 +41,7 @@ class Subtraction(BinaryOperator):
         return x1-x2
 
 
+# *
 class Multiple(BinaryOperator):
     def __init__(self):
         super().__init__(2)
@@ -48,6 +51,7 @@ class Multiple(BinaryOperator):
         return x1 * x2
 
 
+# /
 class Divide(BinaryOperator):
     def __init__(self):
         super().__init__(2)
@@ -60,6 +64,7 @@ class Divide(BinaryOperator):
             print(er)
 
 
+# -
 class MinusUnary(LeftOperator):
     def __init__(self):
         super().__init__(2.5)
@@ -69,6 +74,7 @@ class MinusUnary(LeftOperator):
         return -x1
 
 
+# ^
 class Power(BinaryOperator):
     def __init__(self):
         super().__init__(3)
@@ -78,6 +84,7 @@ class Power(BinaryOperator):
         return pow(x1, x2)
 
 
+# %
 class Module(BinaryOperator):
     def __init__(self):
         super().__init__(4)
@@ -87,6 +94,7 @@ class Module(BinaryOperator):
         return x1 % x2
 
 
+# @
 class Average(BinaryOperator):
     def __init__(self):
         super().__init__(5)
@@ -96,6 +104,7 @@ class Average(BinaryOperator):
         return (x1 + x2)/2
 
 
+# $
 class Maximum(BinaryOperator):
     def __init__(self):
         super().__init__(5)
@@ -105,6 +114,7 @@ class Maximum(BinaryOperator):
         return max(x1, x2)
 
 
+# &
 class Minimum(BinaryOperator):
     def __init__(self):
         super().__init__(5)
@@ -114,6 +124,7 @@ class Minimum(BinaryOperator):
         return min(x1, x2)
 
 
+# !
 class Factorial(RightOperator):
     def __init__(self):
         super().__init__(6)
@@ -128,6 +139,7 @@ class Factorial(RightOperator):
             return x1 * Factorial.calc(x1 - 1)
 
 
+# #
 class Summary(RightOperator):
     def __init__(self):
         super().__init__(6)
@@ -137,6 +149,7 @@ class Summary(RightOperator):
         return sum(int(digit) for digit in str(abs(x1)) if digit.isdigit())
 
 
+# ~
 class Tilda(LeftOperator):
     def __init__(self):
         super().__init__(6)
@@ -146,6 +159,7 @@ class Tilda(LeftOperator):
         return -x1
 
 
+# -
 class MinusSign(LeftOperator):
     def __init__(self):
         super().__init__(7)
