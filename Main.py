@@ -75,7 +75,25 @@ def infix_to_postfix(infix_expression):
     return postfix_expression
 
 
+def evaluation(postfix_expression):
+    stack = []
+
+    for token in postfix_expression:
+        if isinstance(token, int):
+            stack.append(token)
+        elif isinstance(token, BinaryOperator):
+            num2 = stack.pop()
+            num1 = stack.pop()
+            stack.append(token.calc(num1, num2))
+        elif isinstance(token, RightOperator) or isinstance(token, LeftOperator):
+            stack.append(token.calc(stack.pop()))
+        else:
+            print("PROBLEM!")
+
+    return stack[-1]
+
+
 input_expression = "5*(3+4)"
 expression1 = convert_to_instance(input_expression)
 expression1 = infix_to_postfix(expression1)
-print(expression1)
+print(evaluation(expression1))
