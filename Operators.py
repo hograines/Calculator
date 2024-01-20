@@ -61,7 +61,7 @@ class Divide(BinaryOperator):
         try:
             return x1 / x2
         except ZeroDivisionError as er:
-            print(er)
+            print("You can't divide by zero.")
 
 
 # -
