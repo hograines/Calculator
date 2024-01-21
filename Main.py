@@ -91,22 +91,93 @@ def evaluation(postfix_expression):
             else:
                 stack.append(token)
         elif isinstance(token, BinaryOperator):
-            num2 = stack.pop()
-            num1 = stack.pop()
-            stack.append(token.calc(num1, num2))
+            try:
+                num2 = stack.pop()
+                num1 = stack.pop()
+                stack.append(token.calc(num1, num2))
+            except Exception:
+                print("Invalid expression")
+                exit()
         elif isinstance(token, RightOperator) or isinstance(token, LeftOperator):
             try:
                 stack.append(token.calc(stack.pop()))
             except ValueError as er:
                 print(er)
                 flag = True
+            except Exception:
+                print("Invalid expression")
+                exit()
         else:
             print("PROBLEM!")
     if flag is False:
         return stack[-1]
 
 
-input_expression = "(5-6)!"
-expression1 = convert_to_instance(input_expression)
-expression1 = infix_to_postfix(expression1)
-print(evaluation(expression1))
+def how_much(lst, token):
+    counter = 0
+    for tok in lst:
+        if tok == token:
+            counter += 1
+    return counter
+
+
+def balanced_parentheses(unchecked):
+    counter = 0
+    balanced = False
+    for char in unchecked:
+        if char == "(":
+            counter += 1
+        elif char == ")":
+            counter -= 1
+        if counter < 0:
+            return balanced
+    if counter == 0:
+        return not balanced
+    return balanced
+
+
+def check_fact_tilda(unchecked):
+    for i in range(len(unchecked)):
+        if unchecked[i] == '~':
+            if i > 0 and unchecked[i - 1].isdigit():
+                return False
+        elif unchecked[i] == '!':
+            if i < len(unchecked) - 1 and unchecked[i + 1].isdigit():
+                return False
+    return True
+
+
+def minus_gathering(unchecked):
+    result = []
+    minus_counter = 0
+    for char in unchecked:
+        if char == '-':
+            minus_counter += 1
+        else:
+            if minus_counter % 2 == 1:
+                result.append('-')
+            result.append(char)
+            minus_counter = 0
+
+    if minus_counter:
+        if minus_counter % 2 == 1:
+            result.append('-')
+    return ''.join(result)
+
+
+def check_input(unchecked):
+    unchecked.replace(" ", "")
+    unchecked = minus_gathering(unchecked)
+    if check_fact_tilda(unchecked) and balanced_parentheses(unchecked):
+        return True
+    return False
+
+
+input_expression = ""
+
+if check_input(input_expression):
+    expression1 = convert_to_instance(input_expression)
+    expression1 = infix_to_postfix(expression1)
+    print(evaluation(expression1))
+else:
+    print("Invalid Expression")
