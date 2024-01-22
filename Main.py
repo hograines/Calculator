@@ -4,7 +4,6 @@ from Operators import *
 def convert_to_instance(expression):
     operators = {
         '+': Addition(),
-        '-': Subtraction(),
         '*': Multiple(),
         '/': Divide(),
         '^': Power(),
@@ -24,12 +23,33 @@ def convert_to_instance(expression):
 
     for char in expression:
         if char.isnumeric() or char == '.':
+            if char == '.':
+                try:
+                    if '.' in current_char:
+                        raise Exception("Invalid Expression")
+                except Exception:
+                    print("Invalid expression")
+                    exit()
             current_char += char
+        elif char == '-':
+            if current_char:
+                fixed_expression.append(int(current_char) if current_char.isdigit() else operators.get(current_char,
+                                                                                                       current_char))
+                current_char = ''
+            if not fixed_expression:
+                fixed_expression.append(MinusUnary())
+            elif fixed_expression[-1] == '(':
+                fixed_expression.append(MinusUnary())
+            elif isinstance(fixed_expression[-1], Operator):
+                fixed_expression.append(MinusSign())
+            else:
+                fixed_expression.append(Subtraction())
         elif char.isspace():
             continue
         elif current_char:
             fixed_expression.append(int(current_char) if current_char.isdigit() else operators.get(current_char,
                                                                                                    current_char))
+
             current_char = ''
             fixed_expression.append(operators.get(char, char))
         else:
@@ -113,14 +133,6 @@ def evaluation(postfix_expression):
         return stack[-1]
 
 
-def how_much(lst, token):
-    counter = 0
-    for tok in lst:
-        if tok == token:
-            counter += 1
-    return counter
-
-
 def balanced_parentheses(unchecked):
     counter = 0
     balanced = False
@@ -136,12 +148,15 @@ def balanced_parentheses(unchecked):
     return balanced
 
 
-def check_fact_tilda(unchecked):
+def check_fact_tilda_sum(unchecked):
     for i in range(len(unchecked)):
         if unchecked[i] == '~':
             if i > 0 and unchecked[i - 1].isdigit():
                 return False
         elif unchecked[i] == '!':
+            if i < len(unchecked) - 1 and unchecked[i + 1].isdigit():
+                return False
+        elif unchecked[i] == '#':
             if i < len(unchecked) - 1 and unchecked[i + 1].isdigit():
                 return False
     return True
@@ -166,18 +181,34 @@ def minus_gathering(unchecked):
 
 
 def check_input(unchecked):
-    unchecked.replace(" ", "")
-    unchecked = minus_gathering(unchecked)
-    if check_fact_tilda(unchecked) and balanced_parentheses(unchecked):
+    if (check_fact_tilda_sum(unchecked) and
+            balanced_parentheses(unchecked) and
+            unchecked and
+            not unchecked.isspace() and
+            "()" not in unchecked and
+            not any(char.isalpha() for char in unchecked) and
+            not (unchecked[0] == '-' and unchecked[1] == '~') and
+            not (unchecked[unchecked.find('(') + 1] == '-' and unchecked[unchecked.find('(') + 2] == '~') and not
+             (isinstance(unchecked[unchecked.find('(') + 1], BinaryOperator))):
         return True
     return False
 
+try:
+    while True:
+        input_expression = input("Enter a math expression.\n")
+        input_expression.replace(" ", "")
+        stable_input_expression = minus_gathering(input_expression)
+        if check_input(stable_input_expression):
+            expression1 = convert_to_instance(stable_input_expression)
+            expression1 = infix_to_postfix(expression1)
+            print(evaluation(expression1))
+        else:
+            print("Invalid Expression")
+except KeyboardInterrupt:
+    print("You interrupted the program!")
 
-input_expression = ""
-
-if check_input(input_expression):
-    expression1 = convert_to_instance(input_expression)
-    expression1 = infix_to_postfix(expression1)
-    print(evaluation(expression1))
-else:
-    print("Invalid Expression")
+'''
+expression1 = convert_to_instance(input_expression)
+expression1 = infix_to_postfix(expression1)
+print(evaluation(expression1))
+'''
