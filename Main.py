@@ -2,6 +2,11 @@ from Operators import *
 
 
 def convert_to_instance(expression):
+    '''
+    :param expression: Mostly valid math expression
+    :return: A list that contains the same math expression, where the operators have been replaced by their class
+    instances
+    '''
     operators = {
         '+': Addition(),
         '*': Multiple(),
@@ -62,11 +67,11 @@ def convert_to_instance(expression):
     return fixed_expression
 
 
-# input_expression = "5*(3+4)"
-# expression1 = convert_to_instance(input_expression)
-# print(expression1)
-
 def infix_to_postfix(infix_expression):
+    '''
+    :param infix_expression: A list that contains an infix math expression
+    :return: A list that contains the same expression but in postfix
+    '''
     postfix_expression = []
     stack = []
     flag = True
@@ -101,6 +106,10 @@ def infix_to_postfix(infix_expression):
 
 
 def evaluation(postfix_expression):
+    '''
+    :param postfix_expression: A list that contains a postfix math expression
+    :return: The value of the math expression
+    '''
     stack = []
     flag = False
 
@@ -134,6 +143,10 @@ def evaluation(postfix_expression):
 
 
 def balanced_parentheses(unchecked):
+    '''
+    :param unchecked: A math expression
+    :return: Whether the parentheses in the expression are balanced and correct
+    '''
     counter = 0
     balanced = False
     for char in unchecked:
@@ -149,6 +162,10 @@ def balanced_parentheses(unchecked):
 
 
 def check_fact_tilda_sum(unchecked):
+    '''
+    :param unchecked: A math expression
+    :return: Whether the operators Tilda, Sum and Factorial were places correctly in the expression
+    '''
     for i in range(len(unchecked)):
         if unchecked[i] == '~':
             if i > 0 and unchecked[i - 1].isdigit():
@@ -163,6 +180,10 @@ def check_fact_tilda_sum(unchecked):
 
 
 def minus_gathering(unchecked):
+    '''
+    :param unchecked: A math expression
+    :return: The same math expression after gathering excess minuses
+    '''
     result = []
     minus_counter = 0
     for char in unchecked:
@@ -171,6 +192,8 @@ def minus_gathering(unchecked):
         else:
             if minus_counter % 2 == 1:
                 result.append('-')
+            elif minus_counter % 2 == 0:
+                result.append('--')
             result.append(char)
             minus_counter = 0
 
@@ -181,6 +204,10 @@ def minus_gathering(unchecked):
 
 
 def check_input(unchecked):
+    '''
+    :param unchecked: A math expression
+    :return: Whether the expression is valid or not (not entirely, checks everything not operator related)
+    '''
     if (check_fact_tilda_sum(unchecked) and
             balanced_parentheses(unchecked) and
             unchecked and
@@ -192,6 +219,23 @@ def check_input(unchecked):
              (isinstance(unchecked[unchecked.find('(') + 1], BinaryOperator))):
         return True
     return False
+
+
+def input_ready(expression):
+    '''
+    A function for the pytest
+    :param expression: A math expression
+    :return: The value of the math expression (if valid)
+    '''
+    expression.replace(" ", "")
+    expression_new = minus_gathering(expression)
+    if check_input(expression_new):
+        expression_new = convert_to_instance(expression_new)
+        expression_new = infix_to_postfix(expression_new)
+        return evaluation(expression_new)
+    else:
+        return Exception("Invalid")
+
 
 try:
     while True:
@@ -206,9 +250,3 @@ try:
             print("Invalid Expression")
 except KeyboardInterrupt:
     print("You interrupted the program!")
-
-'''
-expression1 = convert_to_instance(input_expression)
-expression1 = infix_to_postfix(expression1)
-print(evaluation(expression1))
-'''
