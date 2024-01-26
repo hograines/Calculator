@@ -29,12 +29,8 @@ def convert_to_instance(expression):
     for char in expression:
         if char.isnumeric() or char == '.':
             if char == '.':
-                try:
-                    if '.' in current_char:
-                        raise Exception("Invalid Expression")
-                except Exception:
-                    print("Invalid expression")
-                    exit()
+                if '.' in current_char:
+                     raise Exception("Invalid Expression")
             current_char += char
         elif char == '-':
             if current_char:
@@ -120,22 +116,11 @@ def evaluation(postfix_expression):
             else:
                 stack.append(token)
         elif isinstance(token, BinaryOperator):
-            try:
-                num2 = stack.pop()
-                num1 = stack.pop()
-                stack.append(token.calc(num1, num2))
-            except Exception:
-                print("Invalid expression")
-                exit()
+            num2 = stack.pop()
+            num1 = stack.pop()
+            stack.append(token.calc(num1, num2))
         elif isinstance(token, RightOperator) or isinstance(token, LeftOperator):
-            try:
-                stack.append(token.calc(stack.pop()))
-            except ValueError as er:
-                print(er)
-                flag = True
-            except Exception:
-                print("Invalid expression")
-                exit()
+            stack.append(token.calc(stack.pop()))
         else:
             print("PROBLEM!")
     if flag is False:
@@ -192,7 +177,7 @@ def minus_gathering(unchecked):
         else:
             if minus_counter % 2 == 1:
                 result.append('-')
-            elif minus_counter % 2 == 0:
+            elif minus_counter != 0:
                 result.append('--')
             result.append(char)
             minus_counter = 0
@@ -216,7 +201,7 @@ def check_input(unchecked):
             not any(char.isalpha() for char in unchecked) and
             not (unchecked[0] == '-' and unchecked[1] == '~') and
             not (unchecked[unchecked.find('(') + 1] == '-' and unchecked[unchecked.find('(') + 2] == '~') and not
-             (isinstance(unchecked[unchecked.find('(') + 1], BinaryOperator))):
+            (isinstance(unchecked[unchecked.find('(') + 1], BinaryOperator))):
         return True
     return False
 
@@ -234,19 +219,15 @@ def input_ready(expression):
         expression_new = infix_to_postfix(expression_new)
         return evaluation(expression_new)
     else:
-        return Exception("Invalid")
+        raise Exception("Invalid")
 
 
-try:
-    while True:
-        input_expression = input("Enter a math expression.\n")
-        input_expression.replace(" ", "")
-        stable_input_expression = minus_gathering(input_expression)
-        if check_input(stable_input_expression):
-            expression1 = convert_to_instance(stable_input_expression)
-            expression1 = infix_to_postfix(expression1)
-            print(evaluation(expression1))
-        else:
-            print("Invalid Expression")
-except KeyboardInterrupt:
-    print("You interrupted the program!")
+if __name__ == "__main__":
+    try:
+        while True:
+            input_expression = input("Enter a math expression.\n")
+            input_ready(input_expression)
+    except Exception:
+        print("Invalid Expression!")
+    except KeyboardInterrupt:
+        print("You interrupted the program!")
